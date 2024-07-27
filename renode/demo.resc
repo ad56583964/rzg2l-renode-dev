@@ -1,0 +1,4 @@
+mach create "armv8a"
+machine LoadPlatformDescription @./board/rzg2l.repl
+pause
+sysbus LoadELF @../output/main.elf

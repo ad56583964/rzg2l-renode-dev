@@ -1,0 +1,3 @@
+pause
+sysbus AddWatchpointHook 0x1004D000 DoubleWord Write "print '32 bit value appeared at the address 0x1004D000'"
+sysbus LoadELF @../output/main.elf

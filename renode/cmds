@@ -1,0 +1,10 @@
+ include @./demo.resc
+s @./demo.resc
+
+s @./reload.resc
+
+pause
+sysbus LoadELF @../output/main.elf
+
+sysbus.cpu GetRegistersValues
+
