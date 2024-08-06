@@ -1,6 +1,7 @@
 using "platforms/cpus/cortex-a53-gicv3.repl"
 
-rzg2l_serial: Python.PythonPeripheral @ sysbus 0x1004D000
-    size: 0x400
-    initable: true
-    filename: "/home/emasi/Documents/WORKSPACE/uboot-baremetal/asm_test/renode/pydev/rzg2l_serial.py"
+sci0: SCI.RenesasRA6M5_SCI @ sysbus 0x1004D000
+    frequency: 50000000
+    enableManchesterMode: false
+    enableFIFO: false
+    fullModel: false

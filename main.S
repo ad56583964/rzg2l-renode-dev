@@ -2,31 +2,43 @@
 
 .section .text
 
-.equ UART_BASE, 0x1004D000
+.equ SCI_BASE, 0x1004D000
 
-.equ UART_SMR, 0x00          // 数据寄存器偏移
-.equ UART_BRR, 0x01       
-.equ UART_SCR, 0x02          // 数据寄存器偏移
-.equ UART_TDR, 0x03         // 标志寄存器偏移
-.equ UART_SSR, 0x04          // 标志寄存器偏移
-.equ UART_RDR, 0x05
-.equ UART_SCMR, 0x06
-.equ UART_SEMR, 0x07
-.equ UART_SNFR, 0x08
-.equ UART_SECR, 0x0D
-.equ UART_TDRH, 0x0E
-.equ UART_TDRL, 0x0F
-.equ UART_TDRHL, 0x0E
-.equ UART_RDRH, 0x10
-.equ UART_RDRL, 0x11
-.equ UART_RDRHL, 0x10
-
-.equ UART_MDDR, 0x12
-
-.equ UART_FR, 0x18          // 标志寄存器偏移
-.equ UART_FR_TXFF, 0x20     // 标志寄存器中的发送缓冲区满标志
+# SCI 寄存器偏移
+.equ SCI_SMR, 0x00
+.equ SCI_BRR, 0x01       
+.equ SCI_SCR, 0x02          
+.equ SCI_TDR, 0x03         
+.equ SCI_SSR, 0x04         
+.equ SCI_RDR, 0x05
+.equ SCI_SCMR, 0x06
+.equ SCI_SEMR, 0x07
+.equ SCI_SNFR, 0x08
+.equ SCI_SECR, 0x0D
+.equ SCI_TDRH, 0x0E
+.equ SCI_TDRL, 0x0F
+.equ SCI_TDRHL, 0x0E
+.equ SCI_RDRH, 0x10
+.equ SCI_RDRL, 0x11
+.equ SCI_RDRHL, 0x10
 
 
 _start:
-    # 写入串口输出(copy from QEMU nuttx)
-    ldr   x15, =UART_BASE
+    # 加载 UART 基地址到 x0 寄存器
+    ldr x0, =SCI_BASE
+    # ldr x1, [x0]           // 从 x0 指向的内存地址加载 64 位的数据到 x1
+    ldrh w1, [x0, #SCI_SCR]          // 从 x0 指向的内存地址加载 16 位的数据到 w1
+    
+    # 在 w2 中存放置位 mask, 1 位置代表想要置 0 的位
+    mov w2, #0xF4
+    # 取其反码
+    mvn w2, w2
+    # 进行与操作
+    and w1, w1, w2
+    # 写入 SCR
+    strh w1, [x0, #SCI_SCR]
+    
+    # 验证全 0 pass
+    
+    # 无限循环
+    b .

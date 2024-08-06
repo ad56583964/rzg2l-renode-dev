@@ -1,5 +1,3 @@
-output/
-*.o
-*.bin
-*.output
-*.elf
+/output/
+/.wip
+.gdb_history
