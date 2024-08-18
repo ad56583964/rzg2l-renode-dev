@@ -1,12 +1,19 @@
 mach create "armv8a"
+
+# i @./cshape/RenesasRA6M5_SCI_debug.cs
+
 machine LoadPlatformDescription @./board/rzg2l.repl
 
-i @./cshape/Rzg2l_UART.cs
 
 # machine LoadPlatformDescriptionFromString 'rzg2l_uart: UART.Rzg2l_UART @ sysbus 0x1004D000'
 
 
 # machine LoadPlatformDescriptionFromString 'rzg2l_sci: SCI.RenesasRA6M5_SCI @ sysbus 0x1004D000'
+
+emulation CreateUartPtyTerminal "term" "/tmp/uart"
+
+connector Connect sysbus.sci0 term
+
 
 pause
 sysbus LoadELF @../output/main.elf

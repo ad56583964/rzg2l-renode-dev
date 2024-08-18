@@ -1,7 +1,7 @@
 using "platforms/cpus/cortex-a53-gicv3.repl"
 
-sci0: SCI.RenesasRA6M5_SCI @ sysbus 0x1004D000
-    frequency: 50000000
+sci0: SCI.RenesasRA6M5_SCI @ sysbus 0x1004b800
+    frequency: 100000000
     enableManchesterMode: false
-    enableFIFO: false
-    fullModel: false
+    enableFIFO: true
+    fullModel: true
