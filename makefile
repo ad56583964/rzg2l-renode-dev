@@ -29,8 +29,12 @@ gdb:
 qemu:
 	qemu-system-aarch64 -M virt -cpu cortex-a53 -kernel output/main.bin -nographic -s -S
 
-renode:
+renode-c_work:
 	cd ${CURDIR}/renode && \
-	renode -e "s @./demo.resc"
+	renode -e "s @./c_work.resc"
 
-.PHONY: all clean gdb renode
+c_work-gdb:
+	cd ${CURDIR}/renode && \
+	renode -e "s @./c_work.resc"
+
+.PHONY: all clean gdb renode renode-c_work

@@ -1,6 +1,6 @@
 CC=aarch64-linux-gnu-gcc
 
-all: main.o main.bin
+all: main.o startup.o main.bin main.elf
 
 test:
 	$(CC) -Wall -nostdlib -lgcc -c  main.c -o build/main.o -l
@@ -11,9 +11,14 @@ check:
 main.o: main.c
 	aarch64-linux-gnu-gcc -g -ffreestanding -nostdlib -c -o build/main.o main.c
 
-main.bin: main.o
-	aarch64-linux-gnu-ld -T linker.ld -o build/main.elf build/main.o
+main.bin: main.o startup.o
+	aarch64-linux-gnu-ld -T linker.ld -o build/main.bin build/main.o build/startup.o
 
+main.elf: main.o startup.o
+	aarch64-linux-gnu-ld -T linker.ld -o build/main.elf build/main.o build/startup.o
+
+startup.o: startup.S
+	aarch64-linux-gnu-gcc -g -ffreestanding -nostdlib -c -o build/startup.o startup.S
 # main.elf: main.c
 # 	$(CC) -g -ffreestanding -o build/main.elf main.c
 
@@ -24,6 +29,6 @@ clean:
 	rm build/*
 
 read-main:
-	aarch64-linux-gnu-objdump -d -S build/main.o > build/main_disasm.txt
-	aarch64-linux-gnu-readelf -a build/main.o > build/readelf.txt
-	aarch64-linux-gnu-nm build/main.o > build/nm.txt
+	aarch64-linux-gnu-objdump -d -S build/main.elf > build/main_disasm.txt
+	aarch64-linux-gnu-readelf -a build/main.elf > build/readelf.txt
+	aarch64-linux-gnu-nm build/main.elf > build/nm.txt
