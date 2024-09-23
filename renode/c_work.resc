@@ -1,0 +1,14 @@
+mach create "armv8a"
+
+# i @./cshape/RenesasRA6M5_SCI_debug.cs
+
+machine LoadPlatformDescription @./board/rzg2l.repl
+
+# emulation CreateUartPtyTerminal "term" "/tmp/uart"
+
+# connector Connect sysbus.sci0 term
+
+machine StartGdbServer 1234
+
+pause
+sysbus LoadELF @../c_work/build/main.elf
