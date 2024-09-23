@@ -1,8 +1,8 @@
-ENTRY(main)
+ENTRY(_start)
 
 SECTIONS
 {
-    . = 0x0000;
+    . = 0x90001000;
 
     .text :
     {
@@ -18,4 +18,10 @@ SECTIONS
     {
         *(.bss)
     }
+    
+    .stack (NOLOAD) :
+    {
+        . = . + 0x1000;
+    }
+    _stack_top = .;
 }
