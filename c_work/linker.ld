@@ -2,7 +2,7 @@ ENTRY(_start)
 
 SECTIONS
 {
-    . = 0x90001000;
+    . = 0x50000000;
 
     .text :
     {
@@ -21,7 +21,9 @@ SECTIONS
     
     .stack (NOLOAD) :
     {
+        . = ALIGN(16);
         . = . + 0x1000;
+        . = ALIGN(16);
     }
     _stack_top = .;
 }

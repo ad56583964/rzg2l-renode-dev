@@ -11,3 +11,13 @@ cd renode
 renode
 >> s @./demo.resc
 ```
+
+开启 tftp
+
+rzg2l uboot 输入命令
+```
+# uboot 存在 bootelf 命令时
+setenv pulltftp 'setenv ipaddr 192.168.5.124; setenv serverip 192.168.5.9; setenv netmask 255.255.255.0; tftp 0x48000000 main.elf'
+setenv loadtftp 'loadelf 0x50000000'
+
+```

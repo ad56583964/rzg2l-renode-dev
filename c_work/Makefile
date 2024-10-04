@@ -12,7 +12,7 @@ main.o: main.c
 	aarch64-linux-gnu-gcc -g -ffreestanding -nostdlib -c -o build/main.o main.c
 
 main.bin: main.o startup.o
-	aarch64-linux-gnu-ld -T linker.ld -o build/main.bin build/main.o build/startup.o
+	aarch64-linux-gnu-ld -T linker.ld -o build/main.bin build/startup.o build/main.o
 
 main.elf: main.o startup.o
 	aarch64-linux-gnu-ld -T linker.ld -o build/main.elf build/main.o build/startup.o
@@ -24,6 +24,9 @@ startup.o: startup.S
 
 disasm: main.bin
 	aarch64-linux-gnu-objdump -d build/main.elf > build/disassembly.txt
+
+bin-disasm: main.bin
+	aarch64-linux-gnu-objdump -D -b binary -m aarch64 --adjust-vma=0x50000000 build/main.bin > build/bin-disassembly.txt
 
 clean:
 	rm build/*

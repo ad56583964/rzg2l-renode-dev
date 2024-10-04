@@ -1,6 +1,7 @@
 .global _start
 
 _start:
+    /* 设置栈顶 */
     ldr x0, =_stack_top
     mov sp, x0
 
