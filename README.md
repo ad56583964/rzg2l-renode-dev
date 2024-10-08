@@ -18,6 +18,9 @@ rzg2l uboot 输入命令
 ```
 # uboot 存在 bootelf 命令时
 setenv pulltftp 'setenv ipaddr 192.168.5.124; setenv serverip 192.168.5.9; setenv netmask 255.255.255.0; tftp 0x48000000 main.elf'
-setenv loadtftp 'loadelf 0x50000000'
+setenv loadtftp 'bootelf 0x48000000'
 
 ```
+
+gdb 查看 SCR 值
+x/1wx 0x1004b804
