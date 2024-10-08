@@ -64,74 +64,77 @@ int is_tend_set(io_reg16_t *reg) {
 
 int main(){
     io_reg16_t *SCR = (io_reg16_t*)(SCI_BASE | SCI_SCR);
+    /* init SCR */
+    *SCR = (io_reg16_t)0x0000U;
+
+    /* 清除 RE 和 TE 位，保持其他位不变 */
+    *SCR &= ~(SCI_SCR_RE | SCI_SCR_TE);
+
+    /* set FCR.TFRST and RFRST bits to 1 */
+    io_reg16_t *FCR = (io_reg16_t*)(SCI_BASE | SCI_FCR);
+    *FCR |= (SCI_FCR_RFRST | SCI_FCR_TFRST);
+
+    /* Read status flags of FSR register and LSR.ORER flag. THen set these flags to 0 */
     io_reg16_t *FSR =  (io_reg16_t*)(SCI_BASE | SCI_FSR);
-    io_reg8_t *FTDR =  (io_reg8_t*)(SCI_BASE | SCI_FTDR);
-    // /* init SCR */
-    // *SCR = (io_reg16_t)0x0000U;
 
-    // /* 清除 RE 和 TE 位，保持其他位不变 */
-    // *SCR &= ~(SCI_SCR_RE | SCI_SCR_TE);
+    io_reg16_t *LSR =  (io_reg16_t*)(SCI_BASE | SCI_LSR);
+    // 读取 LSR 寄存器的值
+    io_reg16_t lsrValue = *LSR;
 
-    // /* set FCR.TFRST and RFRST bits to 1 */
-    // io_reg16_t *FCR = (io_reg16_t*)(SCI_BASE | SCI_FCR);
-    // *FCR |= (SCI_FCR_RFRST | SCI_FCR_TFRST);
+    // 提取 ORER 位
+    io_reg16_t orerBit = lsrValue & SCI_LSR_ORER;
 
-    // /* Read status flags of FSR register and LSR.ORER flag. THen set these flags to 0 */
+    // SCR set TIE RIE TE RE bits to 0
+    *SCR &= ~(SCI_SCR_TIE | SCI_SCR_RIE | SCI_SCR_TE | SCI_SCR_RE);
+    // set CKE
+    *SCR &= ~SCI_SCR_CKE_FOO;
 
-    // io_reg16_t *LSR =  (io_reg16_t*)(SCI_BASE | SCI_LSR);
-    // // 读取 LSR 寄存器的值
-    // io_reg16_t lsrValue = *LSR;
+    //set SMR, 写一半吧，摆烂了
+    io_reg16_t *SMR =  (io_reg16_t*)(SCI_BASE | SCI_SMR);
+    *SMR &= ~(SCI_SMR_CKS_FOO);
 
-    // // 提取 ORER 位
-    // io_reg16_t orerBit = lsrValue & SCI_LSR_ORER;
+    //set SEMR.MDDRS to 0
+    io_reg8_t *SEMR =  (io_reg8_t*)(SCI_BASE | SCI_SEMR);
+    *SEMR &= ~SCI_SEMR_MDDRS;
 
-    // // SCR set TIE RIE TE RE bits to 0
-    // *SCR &= ~(SCI_SCR_TIE | SCI_SCR_RIE | SCI_SCR_TE | SCI_SCR_RE);
-    // // set CKE
-    // *SCR &= ~SCI_SCR_CKE_FOO;
+    //set 115200 BRR N=26
+    io_reg8_t *BRR =  (io_reg8_t*)(SCI_BASE | SCI_BRR);
+    *BRR = 26;
 
-    // //set SMR, 写一半吧，摆烂了
-    // io_reg16_t *SMR =  (io_reg16_t*)(SCI_BASE | SCI_SMR);
-    // *SMR &= ~(SCI_SMR_CKS_FOO);
+    //set SEMR to 1
+    *SEMR |= (SCI_SEMR_BRME | SCI_SEMR_MDDRS);
 
-    // //set SEMR.MDDRS to 0
-    // io_reg8_t *SEMR =  (io_reg8_t*)(SCI_BASE | SCI_SEMR);
-    // *SEMR &= ~SCI_SEMR_MDDRS;
+    //wait 50ms
+    delay_50ms();
 
-    // //set 115200 BRR N=26
-    // io_reg8_t *BRR =  (io_reg8_t*)(SCI_BASE | SCI_BRR);
-    // *BRR = 26;
+    //set MDDR 不管了，懒得设
 
-    // //set SEMR to 1
-    // *SEMR |= (SCI_SEMR_BRME | SCI_SEMR_MDDRS);
-
-    // //wait 50ms
-    // delay_50ms();
-
-    // //set MDDR 不管了，懒得设
-
-    // //set FTCR
-    // io_reg16_t *FTCR =  (io_reg16_t*)(SCI_BASE | SCI_FTCR);
-    // // 置位
-    // *FTCR = (*FTCR & ~SCI_TFTC_MASK) | (0b1111 & SCI_TFTC_MASK);
+    //set FTCR
+    io_reg16_t *FTCR =  (io_reg16_t*)(SCI_BASE | SCI_FTCR);
+    // 置位
+    *FTCR = (*FTCR & ~SCI_TFTC_MASK) | (0b1111 & SCI_TFTC_MASK);
 
     // set SCR_TE RE to 1
     *SCR |= (SCI_SCR_TE | SCI_SCR_RE);
 
     // transmit start
-    while(!is_tdfe_set(FSR));
+    while(is_tdfe_set(FSR));
 
+    io_reg8_t *FTDR =  (io_reg8_t*)(SCI_BASE | SCI_FTDR);
+    *FTDR = '\n';
+    *FTDR = 'A';
+    *FTDR = '\n';
     *FTDR = 'A';
     // *FTDR = 'a';
     // *FTDR = 'A';
 
-    // // set SCR_TIE to 0
-    // *SCR &= ~SCI_SCR_TIE;
-    // // set SCR_TEIE to 1
-    // *SCR |= SCI_SCR_TEIE;
+    // set SCR_TIE to 0
+    *SCR &= ~SCI_SCR_TIE;
+    // set SCR_TEIE to 1
+    *SCR |= SCI_SCR_TEIE;
 
     // wait TEND flag = 1
-    while(!is_tdfe_set(FSR));
+    while(!is_tend_set(FSR));
 
     // set SCR_TE to 0
     *SCR &= ~SCI_SCR_TE;
